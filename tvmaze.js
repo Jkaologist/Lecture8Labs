@@ -16,16 +16,26 @@ async function getShowsByTerm(term) {
   const searchResults = await axios.get(`http://api.tvmaze.com/search/shows?q=${term}`);
   let data = await searchResults.data;
   // This is not working yet. We are working on this!!!!!
+  let showsInfo = [];
   for (let show of data) {
-  return [
-    {
-      id: `${show.id}`,
-      name: `${show.name}`,
-      summary: `${show.summary}`,
-      image: `${show.original}`
+  let img;
+    if(!show.show.image) {
+      img = 'https://www.indiaspora.org/wp-content/uploads/2018/10/image-not-available.jpg'
     }
-  ]
+    else {
+      img = show.show.image.original
+    }
+    let showObj = 
+      { 
+        id: show.show.id,
+        name: show.show.name,
+        summary: show.show.summary,
+        image: img
+      }
+    showsInfo.push(showObj)
   }
+  console.log(showsInfo)
+  return showsInfo
 }
 
 
@@ -39,8 +49,8 @@ function populateShows(shows) {
         `<div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img 
-              src="http://static.tvmaze.com/uploads/images/medium_portrait/160/401704.jpg" 
-              alt="Bletchly Circle San Francisco" 
+              src="${show.image}" 
+              alt="${show.name}" 
               class="w-25 mr-3">
            <div class="media-body">
              <h5 class="text-primary">${show.name}</h5>
